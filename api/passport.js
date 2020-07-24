@@ -43,16 +43,16 @@ passport.use("googleToken", new GooglePlusTokenStrategy({
     passReqToCallback: true
 }, async (req, accessToken, refreshToken, profile, done) => {
     try {
-        console.log("accessToken", accessToken);
-        console.log("refreshToken", refreshToken);
-        console.log("profile", profile);
+        // console.log("accessToken", accessToken);
+        // console.log("refreshToken", refreshToken);
+        // console.log("profile", profile);
 
         // find existing user:-
         let exstingUser = User.findOne({ "google.id": profile.id })
         if (exstingUser) { return done(null, exstingUser) }
 
         const newUser = new User({
-            methods: "google",
+            method: "google",
             google: {
                 id: profile.id,
                 email: profile.emails[0].value
@@ -72,16 +72,16 @@ passport.use("facebookToken", new FacebookTokenStrategy({
     clientSecret: process.env.FACEBOOK_APP_SECRET,
 }, async (accessToken, refreshToken, profile, done) => {
     try {
-        console.log(profile);
-        console.log(accessToken);
-        console.log(refreshToken);
+        // console.log(profile);
+        // console.log(accessToken);
+        // console.log(refreshToken);
 
         let exstingUser = User.findOne({ "facebook.id": profile.id })
         if (exstingUser) { return done(null, exstingUser) }
 
         const newUser = new User({
-            methods: "facebook",
-            google: {
+            method: "facebook",
+            facebook: {
                 id: profile.id,
                 email: profile.emails[0].value
             }
@@ -103,7 +103,7 @@ passport.use(new LocalStrategy({ usernameField: "email" },
                 if (!user) {
                     return done(null, false)
                 }
-                bcrypt.compare(password, user.password, (err, isMached) => {
+                bcrypt.compare(password, user.local.password, (err, isMached) => {
                     if (err) throw err
                     if (isMached) {
                         return done(null, user)

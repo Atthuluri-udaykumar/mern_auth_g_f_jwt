@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const newSchema = new mongoose.Schema({
-    methods: {
+    method: {
         type: String,
         enum: ["local", "google", "facebook"],
         required: true
