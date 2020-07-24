@@ -14,6 +14,8 @@ mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGO_URL, { useUnifiedTopology: true, useNewUrlParser: true }, (err) => {
     if (!err) {
         console.log("db connected");
+    } else {
+        console.log(err);
     }
 });
 

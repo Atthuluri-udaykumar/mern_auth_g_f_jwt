@@ -4,6 +4,7 @@ const User = require("../api/model/user");
 const bcrypt = require('bcryptjs');
 const JwtStrategy = require('passport-jwt').Strategy;
 var GooglePlusTokenStrategy = require('passport-google-plus-token');
+const FacebookTokenStrategy = require('passport-facebook-token');
 
 const cookieExtractor = req => {
     let token = null;
@@ -51,7 +52,7 @@ passport.use("googleToken", new GooglePlusTokenStrategy({
         if (exstingUser) { return done(null, exstingUser) }
 
         const newUser = new User({
-            method: "google",
+            methods: "google",
             google: {
                 id: profile.id,
                 email: profile.emails[0].value
@@ -64,6 +65,35 @@ passport.use("googleToken", new GooglePlusTokenStrategy({
         done(error, false)
     }
 }));
+
+// facebook stratagy
+passport.use("facebookToken", new FacebookTokenStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+}, async (accessToken, refreshToken, profile, done) => {
+    try {
+        console.log(profile);
+        console.log(accessToken);
+        console.log(refreshToken);
+
+        let exstingUser = User.findOne({ "facebook.id": profile.id })
+        if (exstingUser) { return done(null, exstingUser) }
+
+        const newUser = new User({
+            methods: "facebook",
+            google: {
+                id: profile.id,
+                email: profile.emails[0].value
+            }
+        })
+
+        await newUser.save();
+        done(null, newUser)
+    } catch (error) {
+        done(error, false)
+    }
+}
+));
 
 // local stratagy :-
 passport.use(new LocalStrategy({ usernameField: "email" },

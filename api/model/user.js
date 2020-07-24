@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const newSchema = new mongoose.Schema({
-    method: {
+    methods: {
         type: String,
         enum: ["local", "google", "facebook"],
         required: true
@@ -19,11 +19,13 @@ const newSchema = new mongoose.Schema({
 
     google: {
         id: {
-            type: String
+            type: String,
+            require: true
         },
         email: {
             type: String,
-            lowercase: true
+            lowercase: true,
+
         }
     },
 

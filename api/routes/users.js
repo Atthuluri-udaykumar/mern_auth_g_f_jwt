@@ -16,6 +16,8 @@ router.route("/secret")
 router.route("/oauth/google")
     .post(passport.authenticate("googleToken", { session: false }), userController.googleAuth)
 
+router.route("/oauth/facebook")
+    .post(passport.authenticate("facebookToken", { session: false }), userController.facebook)
 router.route("/logout")
     .get(passport.authenticate("jwt", { session: false }), userController.logout)
 module.exports = router
