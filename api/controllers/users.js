@@ -24,7 +24,13 @@ module.exports = {
         const salt = await bcrypt.genSaltSync(10);
         const hash = await bcrypt.hashSync(password, salt);
 
-        const newUser = new User({ method: "local", local: { email, password: hash } })
+        const newUser = new User({
+            method: "local",
+            local: {
+                email: email,
+                password: hash
+            }
+        });
         await newUser.save();
 
         const token = JWT.sign(
