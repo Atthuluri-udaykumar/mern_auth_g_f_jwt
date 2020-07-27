@@ -97,6 +97,6 @@ module.exports = {
     },
     facebook: async (req, res, next) => {
         res.json({ status: 200 })
-        console.log(req.user);
+        // console.log(req.user);
     }
 }

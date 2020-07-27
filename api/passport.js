@@ -70,11 +70,14 @@ passport.use("googleToken", new GooglePlusTokenStrategy({
 passport.use("facebookToken", new FacebookTokenStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
-}, async (accessToken, refreshToken, profile, done) => {
+    passReqToCallback: true
+}, async (req, accessToken, refreshToken, profile, done) => {
     try {
         // console.log(profile);
         // console.log(accessToken);
         // console.log(refreshToken);
+
+        console.log(profile.emails, profile.id);
 
         let exstingUser = User.findOne({ "facebook.id": profile.id })
         if (exstingUser) { return done(null, exstingUser) }
