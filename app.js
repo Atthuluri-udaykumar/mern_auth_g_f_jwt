@@ -1,13 +1,14 @@
 const express = require('express')
 const app = express()
 
+const cors = require('cors')
 const mongoose = require("mongoose")
 const morgan = require('morgan')
 const passport = require('passport')
 const cookieParser = require("cookie-parser")
 require('dotenv').config()
 app.use(cookieParser())
-
+app.use(cors())
 
 mongoose.Promise = global.Promise;
 // db connection :--

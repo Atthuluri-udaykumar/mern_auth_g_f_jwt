@@ -1,0 +1,4 @@
+export const ACTION_TYPES = {
+    AUTH_SIGNUP: "AUTH_SIGNUP",
+    AUTH_ERROR: "AUTH_ERROR"
+}

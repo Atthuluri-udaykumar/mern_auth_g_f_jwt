@@ -82,6 +82,7 @@ module.exports = {
         res.json(req.user)
     },
     googleAuth: async (req, res, next) => {
+        console.log(req.user);
         const token = JWT.sign(
             {
                 iss: "kumar",
