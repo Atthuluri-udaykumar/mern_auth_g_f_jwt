@@ -43,24 +43,26 @@ passport.use("googleToken", new GooglePlusTokenStrategy({
     passReqToCallback: true
 }, async (req, accessToken, refreshToken, profile, done) => {
     try {
-        // console.log("accessToken", accessToken);
-        // console.log("refreshToken", refreshToken);
-        // console.log("profile", profile);
+        console.log("accessToken", accessToken);
+        console.log("refreshToken", refreshToken);
+        console.log("profile", profile);
 
         // find existing user:-
-        let exstingUser = User.findOne({ "google.id": profile.id })
-        if (exstingUser) { return done(null, exstingUser) }
-
-        const newUser = new User({
-            method: "google",
-            google: {
-                id: profile.id,
-                email: profile.emails[0].value
-            }
-        })
-
-        await newUser.save();
-        done(null, newUser)
+        User.findOne({ "google.id": profile.id })
+            .then(currentUser => {
+                if (currentUser) {
+                    done(null, currentUser)
+                } else {
+                    const newUser = new User({
+                        method: "google",
+                        google: {
+                            id: profile.id,
+                            email: profile.emails[0].value
+                        }
+                    })
+                    newUser.save().then(newUser => done(null, newUser)).catch(err => console.log(err))
+                }
+            })
     } catch (error) {
         done(error, false)
     }
@@ -79,19 +81,24 @@ passport.use("facebookToken", new FacebookTokenStrategy({
 
         console.log(profile.emails, profile.id);
 
-        let exstingUser = User.findOne({ "facebook.id": profile.id })
-        if (exstingUser) { return done(null, exstingUser) }
+        User.findOne({ "facebook.id": profile.id })
+            .then(currentUser => {
+                if (currentUser) {
+                    done(null, currentUser)
+                } else {
+                    const newUser = new User({
+                        method: "facebook",
+                        facebook: {
+                            id: profile.id,
+                            email: profile.emails[0].value
+                        }
+                    })
 
-        const newUser = new User({
-            method: "facebook",
-            facebook: {
-                id: profile.id,
-                email: profile.emails[0].value
-            }
-        })
+                    newUser.save().then(newUser => done(null, newUser)).catch(err => console.log(err))
 
-        await newUser.save();
-        done(null, newUser)
+                }
+            })
+
     } catch (error) {
         done(error, false)
     }

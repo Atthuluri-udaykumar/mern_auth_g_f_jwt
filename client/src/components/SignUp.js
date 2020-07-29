@@ -3,7 +3,7 @@ import GoogleLogin from 'react-google-login';
 import FacebookLogin from 'react-facebook-login';
 
 import { connect } from "react-redux"
-import { signUp } from "../action/index"
+import { signUp, oauthGoogle, oauthFacebook } from "../action/index"
 
 const initialvalues = {
     email: "",
@@ -11,7 +11,7 @@ const initialvalues = {
 }
 const SignUp = (props) => {
     const [values, setvalues] = useState(initialvalues)
-
+    const [img, setimg] = useState({ img: "", name: "" })
     const handlechange = (e) => {
         let { name, value } = e.target
         setvalues({
@@ -22,14 +22,33 @@ const SignUp = (props) => {
 
     const responseGoogle = (res) => {
         console.log(res);
+        props.oauthGoogle(res.accessToken)
+        setimg({
+            name: res.profileObj.givenName,
+            img: res.profileObj.imageUrl
+        })
     }
+
     const responseFacebook = (res) => {
-        console.log(res);
+
+        props.oauthFacebook(res.accessToken)
+        setimg({
+            name: res.name,
+            img: res.picture.data.url
+        })
+        if (props.auth_token) {
+            props.history.push("/dashbord")
+        }
+
     }
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(values);
-        props.signUp(values)
+
+        props.signUp(values);
+        if (props.auth_token) {
+            props.history.push("/dashbord")
+        }
     }
     return (
         <div className="container">
@@ -70,7 +89,7 @@ const SignUp = (props) => {
                     <div className="alert alert-info my-5">SignUP whith google or facebook</div>
                     <div>
                         <GoogleLogin
-                            clientId="132896703812-gveducl03dhm3th8n72gfp5rujld63e6.apps.googleusercontent.com"
+                            clientId="1079439413438-ur9jb7a4dsjj8f8dcpqtdsjocv2fj8ot.apps.googleusercontent.com"
                             buttonText="Login"
                             onSuccess={responseGoogle}
                             onFailure={responseGoogle}
@@ -87,13 +106,21 @@ const SignUp = (props) => {
 
                 </div>
             </div>
+            {img.img !== "" ? <div className="card w-50 mx-auto my-5">
+                <h1 className="card-header text-center">{img.name}</h1>
+                <div className="card-img-top d-flex justify-content-center">
+                    <img src={img.img} className="img-fluid w-50 " />
+                </div>
+            </div>
+                : null}
 
         </div>
     )
 }
 
 const mapStateToProps = state => ({
-    error: state.auth.errorMsg
+    error: state.auth.errorMsg,
+    auth_token: state.auth.isAuthenticated
 })
 
-export default connect(mapStateToProps, { signUp })(SignUp);
+export default connect(mapStateToProps, { signUp, oauthGoogle, oauthFacebook })(SignUp);

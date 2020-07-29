@@ -49,7 +49,7 @@ module.exports = {
         })
     },
     signIn: async (req, res, next) => {
-        const { error } = signInValidaton(req.body);
+        const { error } = signUpValidaton(req.body);
         if (error) return res.json({
             status: 400,
             msg: error.details[0].message
@@ -82,7 +82,7 @@ module.exports = {
         res.json(req.user)
     },
     googleAuth: async (req, res, next) => {
-        console.log(req.user);
+
         const token = JWT.sign(
             {
                 iss: "kumar",
@@ -97,7 +97,17 @@ module.exports = {
         })
     },
     facebook: async (req, res, next) => {
-        res.json({ status: 200 })
-        // console.log(req.user);
+        const token = JWT.sign(
+            {
+                iss: "kumar",
+                sub: req.user.id,
+                iat: new Date().getTime(),
+                exp: new Date().setDate(new Date().getDate() + 1)
+            }, process.env.SECRET_KEY);
+        res.cookie("access_token", token, { httpOnly: true }, { sameSite: true })
+        res.json({
+            status: 200,
+            token: token
+        })
     }
 }
